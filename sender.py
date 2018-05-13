@@ -65,9 +65,11 @@ class Sender():
         #         "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}".format(access_token.strip()),
         #         data=json.dumps(template_data))
         template_data = self.wechat_template_data(item, self.USERS[1], object_id)
-        requests.post(
+        print(template_data)
+        res = requests.post(
             "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}".format(access_token.strip()),
             data=json.dumps(template_data))
+        print(res.text)
         return True
 
 
