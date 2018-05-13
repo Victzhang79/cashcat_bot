@@ -36,7 +36,7 @@ def update_data():
     for origin_class in cachcat_crawler.__all__:
         page = 1
         print(origin_class)
-        while page <= 5:
+        while page <= 1:
             d = getattr(cachcat_crawler, origin_class)(page=page)
             result += d.new_items
             page += 1
@@ -68,7 +68,7 @@ def update_data():
             else:
                 break
         for data_object in data_objects:
-            # sender.send(data_dict[data_object.get(info['id_key'])], data_object.id)
+            sender.send(data_dict[data_object.get(info['id_key'])], data_object.id)
             OBJECT_ID_MAP[object_id_key(
                 name, data_object.get(info['id_key']))] = data_object.id
             LEANCLOUD_OBJECT_DATA[object_id_key(
