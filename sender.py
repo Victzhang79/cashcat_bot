@@ -59,11 +59,15 @@ class Sender():
 
     def send(self, item, object_id):
         access_token, _ = self.access_token()
-        for user_id in self.USERS:
-            template_data = self.wechat_template_data(item, user_id, object_id)
-            requests.post(
-                "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}".format(access_token.strip()),
-                data=json.dumps(template_data))
+        # for user_id in self.USERS:
+        #     template_data = self.wechat_template_data(item, user_id, object_id)
+        #     requests.post(
+        #         "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}".format(access_token.strip()),
+        #         data=json.dumps(template_data))
+        template_data = self.wechat_template_data(item, self.USERS[1], object_id)
+        requests.post(
+            "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}".format(access_token.strip()),
+            data=json.dumps(template_data))
         return True
 
 
