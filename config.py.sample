@@ -1,2 +1,4 @@
 leancloud_app_id = ""
 leancloud_app_key = ""
+wechat_app_id = ""
+wechat_app_secret = ""

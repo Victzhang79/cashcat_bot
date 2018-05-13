@@ -37,6 +37,9 @@ class GateIoCrawler(CrawlerBase):
                 notice_detail = HTML(html=self.session.get(url).content.decode('utf-8', 'ignore').encode('utf-8'),
                                      url=url)
                 notice['content'] = notice_detail.find('.dtl-content', first=True).text
+                end_index = notice['content'].index('上一篇')
+                if end_index > 0:
+                    notice['content'] = notice['content'][:end_index]
                 notice['posted_at'] = int(
                     datetime.datetime.strptime(notice_detail.find('.new-dtl-info > span', first=True).text[:19],
                                                '%Y-%m-%d %H:%M:%S').timestamp())

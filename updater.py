@@ -9,7 +9,7 @@ import config
 from sender import Sender
 from util import *
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
 
 leancloud.init(config.leancloud_app_id, config.leancloud_app_key)
 
@@ -36,7 +36,7 @@ def update_data():
     for origin_class in cachcat_crawler.__all__:
         page = 1
         print(origin_class)
-        while page <= 1:
+        while page <= 5:
             d = getattr(cachcat_crawler, origin_class)(page=page)
             result += d.new_items
             page += 1
@@ -67,69 +67,14 @@ def update_data():
                 i += batch_size
             else:
                 break
-        # if len(data_objects) > 0:
-        #     leancloud.Object.save_all(data_objects)
-        for data_object in enumerate(data_objects):
-            sender.send(data_dict[data_object.get(info['id_key'])], data_object.id)
-            OBJECT_ID_MAP[object_id_key(
-                name, data_object.get(info['id_key']))] = data_object.id
-            LEANCLOUD_OBJECT_DATA[object_id_key(
-                name, data_object.get(info['id_key']))] = data_dict[data_object.get(info['id_key'])]
-        write_json('object_id_map.json', OBJECT_ID_MAP)
-        write_json(os.path.join('leancloud_data', name), LEANCLOUD_OBJECT_DATA)
-
-
-def upload_history_data():
-    for origin_class in cachcat_crawler.__all__:
-        page = 1
-        print(origin_class)
-        while page <= 5:
-            d = getattr(cachcat_crawler, origin_class)(page=page)
-            if len(d.items) > 0:
-                page += 1
-            else:
-                page = 10
-    result = []
-    for file_name in os.listdir('data'):
-        file_path = os.path.join('data', file_name)
-        result += load_json(file_path)
-    object_data = {
-        'Notices': {'data': sorted(result, key=lambda x: x['posted_at']), 'id_key': 'id'},
-    }
-
-    for name, info in object_data.items():
-        data_objects = []
-        LEANCLOUD_OBJECT_DATA = load_json(os.path.join('leancloud_data', name))
-        data_dict = {}
-        for item in info['data']:
-            if data_changed(LEANCLOUD_OBJECT_DATA.get(object_id_key(
-                    name, item.get(info['id_key'])), {}), item):
-                if info['id_key'] not in item:
-                    # print(item, name)
-                    continue
-                data_objects.append(leancloud_object(
-                    name, item, info['id_key']))
-            data_dict[item.get(info['id_key'])] = item
-        print(name + " Total Count:" + str(len(info['data'])))
-        print(name + " Changed Count:" + str(len(data_objects)))
-        i = 0
-        batch_size = 50
-        while True:
-            if len(data_objects[i:i + batch_size]) > 0:
-                leancloud.Object.save_all(data_objects[i:i + batch_size])
-                i += batch_size
-            else:
-                break
-        # if len(data_objects) > 0:
-        #     leancloud.Object.save_all(data_objects)
         for data_object in data_objects:
+            # sender.send(data_dict[data_object.get(info['id_key'])], data_object.id)
             OBJECT_ID_MAP[object_id_key(
                 name, data_object.get(info['id_key']))] = data_object.id
             LEANCLOUD_OBJECT_DATA[object_id_key(
                 name, data_object.get(info['id_key']))] = data_dict[data_object.get(info['id_key'])]
         write_json('local_config/object_id_map.json', OBJECT_ID_MAP)
         write_json(os.path.join('leancloud_data', name), LEANCLOUD_OBJECT_DATA)
-
 
 if __name__ == '__main__':
     LEANCLOUD_OBJECT_DATA = {}

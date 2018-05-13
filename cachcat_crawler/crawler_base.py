@@ -8,15 +8,12 @@ class CrawlerBase:
     origin = "base"
     endpoint = None
     session = None
-    origin_request = None
     page = 1
     page_type = constants.PageType.Default
-    items = []
-    new_items = []
-    done_ids = {}
 
     def __init__(self, page=1):
         self.page = page
+        self.new_items = []
         self.items = load_json(self.data_path(), default=list)
         if self.session is None:
             self.session = HTMLSession()

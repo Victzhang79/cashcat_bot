@@ -1,0 +1,2 @@
+leancloud-sdk
+git+https://github.com/kennethreitz/requests-html.git

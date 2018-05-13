@@ -1,3 +1,4 @@
+import concurrent.futures
 import datetime
 
 import leancloud
@@ -14,6 +15,8 @@ class Sender():
              "oguty0hBvTgD1BT3XfC_M4S9aO98",
              "oguty0sL1Q0aNPGlT54IWzQhiqVs"]
 
+    msg_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}"
+
     def __init__(self):
         if not os.path.exists("local_config"):
             os.makedirs("local_config")
@@ -23,14 +26,14 @@ class Sender():
         return tuple(open('local_config/access_token', 'r'))
 
     def update_access_token(self):
-        _, last_updated_at = self.access_token()
-        if int(datetime.datetime.now().timestamp()) >= int(last_updated_at) + 7200:
-            print("Update Access Token")
-            access_token_object = leancloud.Query("Global").equal_to("name", "AccessToken").find()[0]
-            updated_at = int(access_token_object.updated_at.timestamp())
-            access_token = json.loads(access_token_object.get('value'))['access_token']
-            with open("local_config/access_token", "w") as text_file:
-                text_file.write("{0}\n{1}".format(access_token, updated_at))
+        print("Update Access Token")
+        updated_at = int(datetime.datetime.now().timestamp())
+        access_token = requests.get(config.wechat_access_token_url).json()['access_token']
+        access_token_object = leancloud.Object.extend("Global").create_without_data('5af7b7f0a22b9d00447a5903')
+        access_token_object.set('value', access_token)
+        leancloud.Object.save(access_token_object)
+        with open("local_config/access_token", "w") as text_file:
+            text_file.write("{0}\n{1}".format(access_token, updated_at))
 
     def wechat_template_data(self, item, user, object_id):
         return {
@@ -57,6 +60,10 @@ class Sender():
             }
         }
 
+    def post_wechat(self, url, data):
+        res = requests.post(url, data=data)
+        print(res)
+
     def send(self, item, object_id):
         access_token, _ = self.access_token()
         # for user_id in self.USERS:
@@ -64,12 +71,14 @@ class Sender():
         #     requests.post(
         #         "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}".format(access_token.strip()),
         #         data=json.dumps(template_data))
-        template_data = self.wechat_template_data(item, self.USERS[1], object_id)
-        print(template_data)
-        res = requests.post(
-            "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}".format(access_token.strip()),
-            data=json.dumps(template_data))
-        print(res.text)
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+            template_data = self.wechat_template_data(item, self.USERS[1], object_id)
+            print(template_data)
+            job = executor.submit(self.post_wechat, self.msg_url.format(access_token.strip()),
+                                  json.dumps(template_data))
+            job.result()
+
         return True
 
 
