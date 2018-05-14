@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 from requests_html import HTML
 
 from cachcat_crawler.crawler_base import *
