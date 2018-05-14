@@ -12,10 +12,10 @@ from util import *
 
 class Sender():
     USERS = [
-        # "oguty0mlvZcXe6-HNSB9X-FvN6eE",
+        "oguty0mlvZcXe6-HNSB9X-FvN6eE",
         "oguty0motG99qNtomfXT8_4Xq2Qs",
-        # "oguty0hBvTgD1BT3XfC_M4S9aO98",
-        # "oguty0sL1Q0aNPGlT54IWzQhiqVs"
+        "oguty0hBvTgD1BT3XfC_M4S9aO98",
+        "oguty0sL1Q0aNPGlT54IWzQhiqVs"
     ]
 
     msg_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}"
@@ -66,10 +66,11 @@ class Sender():
     def post_wechat(self, url, data):
         print("Start Push: ", url, data)
         res = requests.post(url, data=data)
+        print("Costs", res.elapsed.total_seconds())
         return res.json()
 
     def send(self, item, object_id):
-        with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=len(self.USERS)) as executor:
             access_token, _ = self.access_token()
             jobs = {executor.submit(self.post_wechat, self.msg_url.format(access_token.strip()),
                                     json.dumps(self.wechat_template_data(item, user_id, object_id))): user_id for

@@ -28,7 +28,6 @@ class HuobiProCrawler(CrawlerBase):
                 notice_detail = self.session.get(self.notice_json_url(item['id'])).json()
                 notice['content'] = HTML(
                     html=notice_detail['data']['content'].encode('utf-16')).text
-                print(notice['content'])
                 self.update_line(notice)
 
 
