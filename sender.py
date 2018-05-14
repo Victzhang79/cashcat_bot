@@ -71,6 +71,8 @@ class Sender():
 
     def send(self, item, object_id):
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(self.USERS)) as executor:
+            start = datetime.datetime.now().timestamp()
+            print("Start Jobs At: ", start)
             access_token, _ = self.access_token()
             jobs = {executor.submit(self.post_wechat, self.msg_url.format(access_token.strip()),
                                     json.dumps(self.wechat_template_data(item, user_id, object_id))): user_id for
@@ -81,6 +83,9 @@ class Sender():
                 try:
                     data = future.result()
                     print(data)
+                    end = datetime.datetime.now().timestamp()
+                    print("End Jobs At: ", end)
+                    print("Total Cost: ", end - start)
                 except Exception as exc:
                     print("Error: ", exc)
                 else:
