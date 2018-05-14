@@ -76,6 +76,7 @@ def update_data():
         write_json('local_config/object_id_map.json', OBJECT_ID_MAP)
         write_json(os.path.join('leancloud_data', name), LEANCLOUD_OBJECT_DATA)
 
+
 if __name__ == '__main__':
     LEANCLOUD_OBJECT_DATA = {}
     if not os.path.exists("leancloud_data"):

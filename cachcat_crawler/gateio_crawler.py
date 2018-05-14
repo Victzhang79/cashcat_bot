@@ -30,7 +30,7 @@ class GateIoCrawler(CrawlerBase):
             url = item.absolute_links.pop()
             origin_id = int(url.split('/')[-1])
             _id = "{0}_{1}".format(self.origin, origin_id)
-            title = item.find('.entry > a', first=True).text
+            title = item.find('.entry > a > h3', first=True).text.strip()
             if _id not in self.done_ids and self.is_title_needed(title):
                 notice = {'id': _id, 'url': url, 'origin': constants.ORIGINS[self.origin],
                           'origin_id': origin_id, 'title': title, }

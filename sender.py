@@ -61,23 +61,26 @@ class Sender():
         }
 
     def post_wechat(self, url, data):
+        print("Start Push: ", url, data)
         res = requests.post(url, data=data)
-        print(res)
+        return res.json()
 
     def send(self, item, object_id):
-        access_token, _ = self.access_token()
-        # for user_id in self.USERS:
-        #     template_data = self.wechat_template_data(item, user_id, object_id)
-        #     requests.post(
-        #         "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}".format(access_token.strip()),
-        #         data=json.dumps(template_data))
-
-        with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
-            template_data = self.wechat_template_data(item, self.USERS[1], object_id)
-            print(template_data)
-            job = executor.submit(self.post_wechat, self.msg_url.format(access_token.strip()),
-                                  json.dumps(template_data))
-            job.result()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+            access_token, _ = self.access_token()
+            jobs = {executor.submit(self.post_wechat, self.msg_url.format(access_token.strip()),
+                                    json.dumps(self.wechat_template_data(item, user_id, object_id))): user_id for
+                    user_id
+                    in self.USERS}
+            for future in concurrent.futures.as_completed(jobs):
+                user_id = jobs[future]
+                try:
+                    data = future.result()
+                    print(data)
+                except Exception as exc:
+                    print("Error: ", exc)
+                else:
+                    print("Done: ", user_id)
 
         return True
 
