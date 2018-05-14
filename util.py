@@ -14,7 +14,7 @@ def load_json(file_name, default=dict):
 def write_json(file_name, json_data):
     print('writing:' + file_name)
     with open(file_name, 'w') as outfile:
-        json.dump(json_data, outfile)
+        json.dump(json_data, outfile, ensure_ascii=False)
         print('writing done:' + file_name)
         return True
 

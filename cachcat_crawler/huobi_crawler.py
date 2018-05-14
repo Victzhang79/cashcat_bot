@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 from requests_html import HTML
 
 from cachcat_crawler.crawler_base import *
@@ -29,7 +28,6 @@ class HuobiProCrawler(CrawlerBase):
                 rr = self.session.get(self.notice_json_url(item['id']))
                 notice_detail = json.loads(rr.content.decode('utf-8', 'ignore'))
                 print(notice_detail)
-                print(rr.encoding)
                 print(rr.content)
                 notice['content'] = HTML(
                     html=notice_detail['data']['content']).text
