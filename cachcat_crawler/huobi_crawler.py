@@ -25,11 +25,9 @@ class HuobiProCrawler(CrawlerBase):
                 notice = {'id': _id, 'url': self.notice_url(item['id']), 'origin': constants.ORIGINS[self.origin],
                           'origin_id': item['id'], 'posted_at': int(item['created']) / 1000,
                           'title': item['title'], 'short_content': item['content'], }
-                rr = self.session.get(self.notice_json_url(item['id']))
-                notice_detail = json.loads(rr.content.decode('utf-8', 'ignore'))
-                print(notice_detail)
+                notice_detail = self.session.get(self.notice_json_url(item['id'])).json()
                 notice['content'] = HTML(
-                    html=notice_detail['data']['content']).text
+                    html=notice_detail['data']['content'].encode('utf-16')).text
                 print(notice['content'])
                 self.update_line(notice)
 
