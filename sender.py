@@ -11,7 +11,7 @@ from util import *
 
 
 class Sender():
-    USERS = [
+    TEST_USERS = [
         "oguty0mlvZcXe6-HNSB9X-FvN6eE",
         "oguty0motG99qNtomfXT8_4Xq2Qs",
         "oguty0hBvTgD1BT3XfC_M4S9aO98",
@@ -19,10 +19,13 @@ class Sender():
     ]
 
     msg_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}"
+    users_url = "https://api.weixin.qq.com/cgi-bin/user/get?access_token={0}"
 
     def __init__(self):
         if not os.path.exists("local_config"):
             os.makedirs("local_config")
+        access_token, _ = self.access_token()
+        self.users = requests.get(self.users_url.format(access_token.strip())).json()['data']['openid']
         leancloud.init(config.leancloud_app_id, config.leancloud_app_key)
 
     def access_token(self):
@@ -74,14 +77,14 @@ class Sender():
         return res.json()
 
     def send(self, item, object_id):
-        with concurrent.futures.ThreadPoolExecutor(max_workers=len(self.USERS)) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=len(self.users)) as executor:
             start = datetime.datetime.now().timestamp()
             print("Start Jobs At: ", start)
             access_token, _ = self.access_token()
             jobs = {executor.submit(self.post_wechat, self.msg_url.format(access_token.strip()),
                                     json.dumps(self.wechat_template_data(item, user_id, object_id))): user_id for
                     user_id
-                    in self.USERS}
+                    in self.users}
             for future in concurrent.futures.as_completed(jobs):
                 user_id = jobs[future]
                 try:
