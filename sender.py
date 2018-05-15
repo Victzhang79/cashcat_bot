@@ -14,8 +14,8 @@ class Sender():
     USERS = [
         "oguty0mlvZcXe6-HNSB9X-FvN6eE",
         "oguty0motG99qNtomfXT8_4Xq2Qs",
-        # "oguty0hBvTgD1BT3XfC_M4S9aO98",
-        # "oguty0sL1Q0aNPGlT54IWzQhiqVs"
+        "oguty0hBvTgD1BT3XfC_M4S9aO98",
+        "oguty0sL1Q0aNPGlT54IWzQhiqVs"
     ]
 
     msg_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}"
