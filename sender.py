@@ -14,8 +14,8 @@ class Sender():
     USERS = [
         "oguty0mlvZcXe6-HNSB9X-FvN6eE",
         "oguty0motG99qNtomfXT8_4Xq2Qs",
-        "oguty0hBvTgD1BT3XfC_M4S9aO98",
-        "oguty0sL1Q0aNPGlT54IWzQhiqVs"
+        # "oguty0hBvTgD1BT3XfC_M4S9aO98",
+        # "oguty0sL1Q0aNPGlT54IWzQhiqVs"
     ]
 
     msg_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}"
@@ -43,6 +43,10 @@ class Sender():
             "touser": user,
             "template_id": "mcyHLEbhwG8bHFqGXPeV5AZDW68a8F_X8txHJ45IFvU",
             "url": "http://cashcat.leanapp.cn/#/messages/{0}".format(object_id),
+            "miniprogram": {
+                "appid": "wx0eee219b5cfcd79a",
+                "pagepath": "pages/messages/show?id={0}".format(object_id)
+            },
             "data": {
                 "first": {
                     "value": "{0}\n".format(item['title']),
