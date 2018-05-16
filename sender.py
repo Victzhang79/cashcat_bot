@@ -21,12 +21,14 @@ class Sender():
     msg_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}"
     users_url = "https://api.weixin.qq.com/cgi-bin/user/get?access_token={0}"
     leancloud.init(config.leancloud_app_id, config.leancloud_app_key)
+
     def __init__(self):
         if not os.path.exists("local_config"):
             os.makedirs("local_config")
+        start = datetime.datetime.now().timestamp()
         access_token, _ = self.access_token()
-        print(requests.get(self.users_url.format(access_token.strip())).json())
         self.users = requests.get(self.users_url.format(access_token.strip())).json()['data']['openid']
+        print("Get Users Cost:", datetime.datetime.now().timestamp() - start)
 
     def access_token(self):
         return tuple(open('local_config/access_token', 'r'))
