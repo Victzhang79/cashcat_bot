@@ -27,7 +27,7 @@ class ZbCrawler(CrawlerBase):
                 notice_detail = self.session.get(url).html
                 notice['content'] = notice_detail.find('.page-content', first=True).text
                 notice['posted_at'] = int(
-                    datetime.datetime.strptime(item.find('time', first=True).attrs['datetime'][:19],
-                                               '%Y-%m-%d %H:%M:%S').timestamp())
+                    datetime.datetime.strptime(item.find('time', first=True).attrs['datetime'][:19] + "+0800",
+                                               '%Y-%m-%d %H:%M:%S%z').timestamp())
                 notice['short_content'] = notice['content'].replace('\n', ' ')[:75] + "..."
                 self.update_line(notice)
