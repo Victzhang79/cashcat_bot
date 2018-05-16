@@ -93,8 +93,7 @@ class Sender():
                     data = future.result()
                     print(data)
                     end = datetime.datetime.now().timestamp()
-                    print("End Jobs At: ", end)
-                    print("Total Cost: ", end - start)
+                    print(user_id, " End Jobs At: ", end, "Total Cost: ", end - start)
                 except Exception as exc:
                     print("Error: ", exc)
                 else:
