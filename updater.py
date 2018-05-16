@@ -32,7 +32,7 @@ def leancloud_object(name, data, id_key='id'):
 
 def update_data():
     result = []
-    sender = Sender()
+    sender = None
     for origin_class in cachcat_crawler.__all__:
         page = 1
         print(origin_class)
@@ -74,8 +74,10 @@ def update_data():
                 name, data_object.get(info['id_key']))] = data_dict[data_object.get(info['id_key'])]
         write_json('local_config/object_id_map.json', OBJECT_ID_MAP)
         write_json(os.path.join('leancloud_data', name), LEANCLOUD_OBJECT_DATA)
-        # for data_object in data_objects:
-            # sender.send(data_dict[data_object.get(info['id_key'])], data_object.id)
+        for data_object in data_objects:
+            if sender is None:
+                sender = Sender()
+            sender.send(data_dict[data_object.get(info['id_key'])], data_object.id)
 
 
 if __name__ == '__main__':
